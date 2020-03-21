@@ -35,6 +35,7 @@ table tbody tr:nth-child(odd) button{
     color:white;
 }
 
+table tbody tr.selectedRow button,
 table tbody tr:nth-child(even) button{
     background: white;
     color:#234465;
@@ -91,4 +92,18 @@ form button{
     color:white;
     border: none;
     padding: 0.5%;
+}
+
+.no-data {
+    border: none;
+    color: darkred;
+}
+
+.selectedRow {
+    background-color: #45cec1 !important; 
+    color: white !important;
+}
+
+.notification{
+    color: darkred;
 }

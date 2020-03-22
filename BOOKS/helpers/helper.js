@@ -12,34 +12,35 @@ export const elements = {
 
 /**
  *
- *
- * @returns {Book}
+ * @param {Object} objectData
+ * @param {HTMLFormElement} formRef
+ * @returns {Object}
  */
-export function extractFormData() {
-    const form = elements.formRef;
-    const book = new Book();
-    const keys = Object.keys(book);
-    const inputs = form.elements;
+export function extractFormData(formRef, objectData) {
+
+    const keys = Object.keys(objectData);
+    const inputs = formRef.elements;
     keys.forEach(key => {
-        book[key] = inputs.namedItem(key).value;
+        objectData[key] = inputs.namedItem(key).value;
     });
-    return book;
+    return objectData;
 }
 
 /**
  *
  *
  * @export
- * @param {Book} book
+ * @param {Object} objectData
+ * @param {HTMLFormElement} formRef
  */
-export function fillFormData(book) {
-    const form = elements.formRef;
-    const keys = Object.keys(book);
-    const inputs = form.elements;
+export function fillFormData(formRef,objectData) {
+    const keys = Object.keys(objectData);
+    const inputs = formRef.elements;
     keys.forEach(key => {
-        inputs.namedItem(key).value = book[key];
+        inputs.namedItem(key).value = objectData[key];
     });
 }
+
 /**
  *
  *
@@ -65,6 +66,25 @@ export function renderTableRow(tBodyRef, id, book) {
     tBodyRef.appendChild(tr);
 }
 
+async function getTemplateByName(templateName) {
+    const response = await fetch(`/BOOKS/templates/${templateName}.handlebars`);
+    const data = response.text();
+    return data;
+}
+
+export async function renderTableBody(tBodyRef, books) {
+
+    const tableDataTemplate = await getTemplateByName('table-data');
+
+    Handlebars.registerPartial( 'table-data', tableDataTemplate);
+
+    const tableBodyTemplate = await getTemplateByName('table-body');
+    const template = Handlebars.compile(tableBodyTemplate);
+    const tableBodyHtml = template({books});
+
+    tBodyRef.innerHTML = tableBodyHtml;
+}
+
 function removeSpanNotification(form) {
     [...form.querySelectorAll('span')]
         .forEach(e => {
@@ -76,9 +96,10 @@ function removeSpanNotification(form) {
  *
  * Clear form input elements value.
  * @export
+ * @param {HTMLFormElement} form
  */
-export function clearForm() {
-    const form = elements.formRef;
+export function clearForm(form) {
+   // const form = elements.formRef;
     [...form.elements]
         .filter(e => e.tagName === 'INPUT')
         .forEach(e => { 
@@ -100,10 +121,10 @@ export function enableSubmitBtn() {
  *
  *
  * @export
- * @param {Book} book
+ * @param {HTMLFormElement} form
  */
-export function validateBookData(book){
-    const form = elements.formRef;
+export function validateFormData(form){
+    // const form = elements.formRef;
     removeSpanNotification(form);
     let result = true;
     [...form.elements]

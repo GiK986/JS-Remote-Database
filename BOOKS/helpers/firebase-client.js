@@ -1,57 +1,65 @@
-import { Book } from "../models/book.js";
-
-const BASE_URL = 'https://js-remote-database.firebaseio.com/books'
-
-
 export class Client {
 
+    #apiId;
+    #collection;
+    #base_url;
+
+    constructor(apiId, collection) {
+        if (!apiId) {
+            throw new Error("apiId can't be empty");
+        }
+        if (!collection) {
+            throw new Error("collection can't be empty");
+        }
+        this.#apiId = apiId;
+        this.#collection = collection;
+        this.#base_url = `${this.#apiId}/${this.#collection}`;
+    }
 
     /**
      *
-     * Create new book
-     * @param {Book} book
+     * Create new entry
+     * @param {Object} entry - Object entry
      * @returns {Promise<{name: string}>}
      * @memberof Client
      */
-    async CreateBook(book){
-        const url = `${BASE_URL}.json`;
+    async Create(entry){
+        const url = `${this.#base_url}.json`;
 
-        const options = { method: 'POST', body: JSON.stringify(book) };
+        const options = { method: 'POST', body: JSON.stringify(entry) };
         const response = await fetch(url, options);
-        const data = await response.json();
+        const result = await response.json();
 
-        return data;
+        return result;
     }
 
     /**
      *
      * Update existing book by id.
-     * @param {string} bookId
-     * @param {Book} book
-     * @returns {Promise<Book>}
+     * @param {string} entryId
+     * @param {Object} entry - Object entry
+     * @returns {Promise<Object>} - modified Object entry
      * @memberof Client
      */
-    async UpdateBook(bookId, book){
-        const url = `${BASE_URL}/${bookId}.json`;
+    async Update(entryId, entry){
+        const url = `${this.#base_url}/${entryId}.json`;
 
-        const options = { method: 'PUT', body: JSON.stringify(book) };
+        const options = { method: 'PUT', body: JSON.stringify(entry) };
         const response = await fetch(url, options);
-        const data = await response.json();
-
-        let bookModified = Object.assign(new Book(), data);
+        const result = await response.json();
            
-        return bookModified;
+        return result;
     }
 
     /**
      *
      *
-     * @param {string} bookId
+     * @param {string} entryId
      * @returns {Promise<boolean>}
      * @memberof Client
      */
-    async DeleteBook(bookId){
-        const url = `${BASE_URL}/${bookId}.json`;
+    async Delete(entryId){
+        const url = `${this.#base_url}/${entryId}.json`;
 
         const options = { method: 'DELETE' };
         const response = await fetch(url, options);
@@ -62,45 +70,44 @@ export class Client {
 
     /**
      *
-     * Return all collections of books 
-     * @returns {Promise<[{id:string, book:Book}]>}
+     * Return all collections
+     * @returns {Promise<[{id:string, entry:Object}]>}
      * @memberof Client
      */
-    async GetAllBooks() {
-        const url = `${BASE_URL}.json`;
+    async GetAllEntries() {
+        const url = `${this.#base_url}.json`;
         
         const response = await fetch(url);
         const data = await response.json();
 
+        if (data === null) {
+            return null;
+        }
+
         let dataArr = Object.entries(data);
-        let books = dataArr.map(item => {
-            
+        let entries = dataArr.map(item => {
             return {
                 id: item[0],
-                book: Object.assign(new Book(), item[1])
+                entry: item[1],
             }
-
         });
 
-        return books;
+        return entries;
     } 
 
     /**
      *
      *
-     * @param {string} bookId
-     * @returns {Promise<Book>}
+     * @param {string} entryId
+     * @returns {Promise<Object>}
      * @memberof Client
      */
-    async GetBookById(bookId) {
-        const url = `${BASE_URL}/${bookId}.json`;
+    async GetEntryById(entryId) {
+        const url = `${this.#base_url}/${entryId}.json`;
         
         const response = await fetch(url);
-        const data = await response.json();
+        const result = await response.json();
 
-        let book = Object.assign(new Book(), data);
-           
-
-        return book;
+        return result;
     } 
 }

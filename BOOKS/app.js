@@ -1,45 +1,53 @@
-import { elements, extractFormData, renderTableRow, clearForm, fillFormData, disableSubmitBtn, enableSubmitBtn, validateBookData } from "./helpers/helper.js";
+import  {elements, extractFormData, renderTableBody, clearForm, fillFormData, disableSubmitBtn, enableSubmitBtn, validateFormData } from "./helpers/helper.js";
 import { Client } from "./helpers/firebase-client.js";
+import { Book } from "./models/book.js";
 
 let selectedBookId = '';
-const client = new Client();
+const apiId = 'https://js-remote-database.firebaseio.com';
+const collection = 'books';
+const client = new Client(apiId, collection);
 
 
-
+/**
+ *
+ *
+ * @param {MouseEvent} event
+ * @returns
+ */
 async function createBook(event) {
     event.preventDefault();
-    const book = extractFormData();
-    if (!validateBookData(book)) {
+    const form = event.target.parentNode;
+  
+    if (!validateFormData(form)) {
         return;
     }
-    const result = await client.CreateBook(book);
+
+    const book = extractFormData(form, new Book());
+    const result = await client.Create(book);
     console.log(result);
 
     refreshData();
 }
 
 async function loadBooks() {
+    let books = await client.GetAllEntries();
 
     const tBodyRef = elements.tBodyRef;
-    tBodyRef.innerHTML = '';
 
-    let books = await client.GetAllBooks();
-    books.forEach( ({ id, book }) => {
-        renderTableRow(tBodyRef, id, book);
-    });
+    await renderTableBody(tBodyRef, books);
 
-    clearForm();
+    clearForm(elements.formRef);
     enableSubmitBtn();
 }
 
 async function loadBook(bookId) {
     
-    const book = await client.GetBookById(bookId);
-    fillFormData(book);
+    const book = await client.GetEntryById(bookId);
+    const form = elements.formRef;
+    fillFormData(form, book);
 
     disableSubmitBtn();
     selectedBookId = bookId;
-    console.log(selectedBookId);
 }
 
 async function editHandleEvent(event) {
@@ -63,15 +71,16 @@ async function editHandleEvent(event) {
     }
 
     if (isButton && selectedBookId === bookId) {
-        const isEditBtn = currentTarget.className === 'edit';
+        const isEditBtn = currentTarget.dataset['method'] === 'edit';
         let result = undefined;
         if (isEditBtn) {
-            const book = extractFormData();
-            result = await client.UpdateBook(selectedBookId, book);
+
+            const book = extractFormData(elements.formRef, new Book());
+            result = await client.Update(selectedBookId, book);
             console.log(result);
         }
         else {
-           result = await client.DeleteBook(bookId);
+           result = await client.Delete(bookId);
            console.log(result);
         }
         selectedBookId = undefined;
@@ -80,7 +89,7 @@ async function editHandleEvent(event) {
 }
 
 function refreshData() {
-        clearForm();
+        clearForm(elements.formRef);
         loadBooks();
 }
 

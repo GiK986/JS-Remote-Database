@@ -1,0 +1,11 @@
+{{#if books}}
+{{#each books}}
+    <tr data-bookid="{{this.id}}">
+        {{>table-data this.entry}}
+    </tr>
+{{/each}}
+{{else}}
+<tr>
+    <td colspan="4" class="no-data">Not available records for books.</td>
+</tr>
+{{/if}}

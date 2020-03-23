@@ -43,3 +43,45 @@ table tbody tr:nth-child(even) button{
 table tr:hover{
     text-decoration: underline;
 }
+
+label, input{
+    display:block;
+    margin: 0 auto;
+}
+
+form input{
+    margin-bottom: 1%;
+    width: 25%;
+}
+
+form{
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}
+
+form button{
+    margin: 0 auto;
+    display:block;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    border-radius: 4px;
+    background-color: #234465;
+    color:white;
+    border: none;
+    padding: 0.5%;
+}
+
+.no-data {
+    border: none;
+    color: darkred;
+}
+
+.selectedRow {
+    background-color: #45cec1 !important; 
+    color: white !important;
+}
+
+.notification{
+    color: darkred;
+}

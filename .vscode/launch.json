@@ -10,6 +10,13 @@
             "name": "BOOKS",
             "url": "http://localhost:5500/BOOKS/index.html",
             "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "STUDENTS",
+            "url": "http://localhost:5500/STUDENTS/index.html",
+            "webRoot": "${workspaceFolder}"
         }
     ]
 }

@@ -1,0 +1,11 @@
+{{#if students}}
+{{#each students}}
+    <tr>
+        {{>table-data this}}
+    </tr>
+{{/each}}
+{{else}}
+<tr>
+    <td colspan="4" class="no-data">Not available records for students.</td>
+</tr>
+{{/if}}

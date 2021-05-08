@@ -9,6 +9,6 @@
   "author": "GiK986",
   "license": "ISC",
   "dependencies": {
-    "handlebars": "^4.7.3"
+    "handlebars": "^4.7.7"
   }
 }
